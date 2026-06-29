@@ -1,78 +1,113 @@
 #==============================================================================
 # syn_genus.tcl
-# Script de sintese logica do Cofre Digital no Cadence Genus.
+# Sintese logica do Cofre Digital no Cadence Genus
 #
-# Uso:  genus -batch -files syn_genus.tcl
-#
-# AJUSTES OBRIGATORIOS antes de rodar:
-#   - LIB_DIR  : caminho da biblioteca .lib da tecnologia
-#   - LIB_NAME : nome do arquivo .lib
-#   - PERIODO  : periodo de clock alvo (em ns)
+# Uso:
+#   cd syn
+#   genus -files syn_genus.tcl
 #==============================================================================
 
-#--- 1. Configuracao da biblioteca -------------------------------------------
-set LIB_DIR  "/caminho/para/biblioteca"     ;# <-- AJUSTAR
-set LIB_NAME "tecnologia_typical.lib"        ;# <-- AJUSTAR
+# Diretório onde o script está sendo executado
+set LOCAL_DIR [exec pwd]
 
-set_db init_lib_search_path $LIB_DIR
-set_db library $LIB_NAME
+# Como o script roda dentro de syn/, o projeto está um nível acima
+set PROJ_DIR [file normalize "$LOCAL_DIR/.."]
 
-#--- 2. Leitura do RTL --------------------------------------------------------
-set RTL_DIR "../rtl"
+# Caminhos do projeto
+set RTL_PATH "$PROJ_DIR/rtl"
+set LIB_PATH "$PROJ_DIR/library"
+
+# Biblioteca de timing
+set LIBRARY gscl45nm.lib
+
+# Top-level
+set DESIGN cofre_top
+
+# Data/hora para criar pastas únicas
+set DATE [clock format [clock seconds] -format "%b%d-%H-%M-%S"]
+
+# Pastas de saída
+set OUT_DIR "$PROJ_DIR/outputs/outputs_$DATE"
+set REP_DIR "$PROJ_DIR/reports/reports_$DATE"
+
+file mkdir $OUT_DIR
+file mkdir $REP_DIR
+
+puts "===================================="
+puts "Rodando sintese do design: $DESIGN"
+puts "Biblioteca: $LIB_PATH/$LIBRARY"
+puts "===================================="
+
+#==============================================================================
+# 1. Leitura da biblioteca e dos arquivos RTL
+#==============================================================================
+
+read_lib "$LIB_PATH/$LIBRARY"
 
 read_hdl -sv [list \
-  $RTL_DIR/cofre_pkg.sv \
-  $RTL_DIR/registrador_senha.sv \
-  $RTL_DIR/comparador.sv \
-  $RTL_DIR/contador_tentativas.sv \
-  $RTL_DIR/temporizador.sv \
-  $RTL_DIR/cofre_controller.sv \
-  $RTL_DIR/cofre_top.sv \
+    "$RTL_PATH/cofre_pkg.sv" \
+    "$RTL_PATH/registrador_senha.sv" \
+    "$RTL_PATH/comparador.sv" \
+    "$RTL_PATH/contador_tentativas.sv" \
+    "$RTL_PATH/temporizador.sv" \
+    "$RTL_PATH/cofre_controller.sv" \
+    "$RTL_PATH/cofre_top.sv" \
 ]
 
-#--- 3. Elaboracao ------------------------------------------------------------
-elaborate cofre_top
+#==============================================================================
+# 2. Elaboracao
+#==============================================================================
+
+elaborate $DESIGN
+current_design $DESIGN
+
 check_design -unresolved
 
-#--- 4. Restricoes de timing --------------------------------------------------
-set PERIODO 10.0   ;# <-- AJUSTAR (periodo de clock em ns; 10ns = 100 MHz)
+#==============================================================================
+# 3. Constraints de timing
+#==============================================================================
 
-create_clock -name clk -period $PERIODO [get_ports clk]
-set_clock_uncertainty [expr 0.05 * $PERIODO] [get_clocks clk]
+# Clock de 10 ns = 100 MHz
+create_clock -name clk -period 10 [get_ports clk]
 
-# Reset tratado como entrada assincrona (nao constrange pelo clock)
+# Reset assíncrono fora da análise principal de timing
 set_false_path -from [get_ports rst]
 
-# Margens de I/O (40% do periodo como exemplo)
-set_input_delay  [expr 0.4 * $PERIODO] -clock clk [all_inputs]
-set_output_delay [expr 0.4 * $PERIODO] -clock clk [all_outputs]
+# Atrasos de entrada, removendo clock e reset
+set_input_delay 1 -clock clk \
+    [remove_from_collection [all_inputs] [get_ports {clk rst}]]
 
-#--- 5. Sintese ---------------------------------------------------------------
-set_db syn_generic_effort medium
-set_db syn_map_effort     medium
-set_db syn_opt_effort     medium
+# Atraso requerido nas saídas
+set_output_delay 1 -clock clk [all_outputs]
 
-syn_generic
+#==============================================================================
+# 4. Sintese
+#==============================================================================
+
+syn_gen
 syn_map
 syn_opt
 
-#--- 6. Relatorios (analises obrigatorias) ------------------------------------
-report_area    > reports/area.rpt
-report_power   > reports/power.rpt
-report_timing  > reports/timing.rpt
-report_timing -unconstrained > reports/timing_unconstrained.rpt
+#==============================================================================
+# 5. Relatorios
+#==============================================================================
 
-# Resumo de gates e Fmax
-report_gates   > reports/gates.rpt
+report area > "$REP_DIR/${DESIGN}_area.rpt"
+report power > "$REP_DIR/${DESIGN}_power.rpt"
+report gates > "$REP_DIR/${DESIGN}_gates.rpt"
+report timing -max_paths 10 > "$REP_DIR/${DESIGN}_timing_10paths.rpt"
 
-#--- 7. Escrita do netlist e SDC ----------------------------------------------
-write_hdl > cofre_top_netlist.v
-write_sdc > cofre_top.sdc
+#==============================================================================
+# 6. Arquivos de saida
+#==============================================================================
 
-puts "================================================="
-puts " Sintese concluida."
-puts " Netlist: cofre_top_netlist.v"
-puts " Relatorios em: reports/"
-puts "================================================="
+write_hdl > "$OUT_DIR/${DESIGN}_netlist.v"
+write_sdc > "$OUT_DIR/${DESIGN}.sdc"
+
+puts "===================================="
+puts "Sintese finalizada"
+puts "Netlist: $OUT_DIR/${DESIGN}_netlist.v"
+puts "Relatorios: $REP_DIR"
+puts "===================================="
 
 exit
