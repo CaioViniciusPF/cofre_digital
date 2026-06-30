@@ -1,19 +1,17 @@
-//==============================================================================
 // cofre_pkg.sv
 // Pacote com tipos e parametros compartilhados do Cofre Digital Programavel
-//==============================================================================
 package cofre_pkg;
 
   // Largura da senha (numero de digitos)
   parameter int N_DIGITOS  = 4;
-  // Largura de cada digito (4 bits -> teclado 0..9, mas suporta 0..15)
+  // Largura de cada digito
   parameter int W_DIGITO   = 4;
   // Largura total da senha
   parameter int W_SENHA    = N_DIGITOS * W_DIGITO; // 16 bits
 
   // Numero maximo de tentativas invalidas antes do bloqueio
   parameter int MAX_TENT   = 3;
-  // Ciclos de clock que o cofre permanece bloqueado (temporizador)
+  // Ciclos de clock que o cofre permanece bloqueado
   parameter int T_BLOQUEIO = 20;
 
   // Estados da FSM principal (Moore)
