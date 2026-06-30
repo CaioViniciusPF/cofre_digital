@@ -1,8 +1,7 @@
-//==============================================================================
 // contador_tentativas.sv
 // Conta tentativas invalidas. Emite 'estourou' quando atinge MAX_TENT.
 // 'limpar' zera o contador (acesso valido ou fim do bloqueio).
-//==============================================================================
+
 import cofre_pkg::*;
 
 module contador_tentativas (
