@@ -1,7 +1,6 @@
-//==============================================================================
 // temporizador.sv
 // Conta T_BLOQUEIO ciclos quando 'iniciar' é ativado. Emite 'fim' ao terminar.
-//==============================================================================
+
 import cofre_pkg::*;
 
 module temporizador (
