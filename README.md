@@ -1,8 +1,8 @@
-# Projeto Final — Cofre Digital Programável
+# Projeto Final - Cofre Digital Programável
 
 **Disciplina:** Sistemas Digitais (SystemVerilog, Xcelium e Genus)
-**Tema:** Projeto 3 — Cofre Digital Programável
-**Equipe:** 2 integrantes
+**Tema:** Projeto 3 - Cofre Digital Programável
+**Equipe:** Caio Vinícius Pessoa Freires e Victor Guedes Alves Teixeira
 
 ---
 
@@ -14,10 +14,10 @@ validar acesso, alterar a senha (com o cofre aberto) e se bloqueia
 temporariamente após um número configurável de tentativas inválidas.
 
 ### Requisitos funcionais atendidos
-- **Cadastro de senha** — estado `S_CADASTRO` grava a senha inicial.
-- **Alteração de senha** — estado `S_ALTERA`, acessível apenas com o cofre aberto.
-- **Validação de acesso** — `comparador` + estado `S_VALIDA`.
-- **Bloqueio após tentativas inválidas** — `contador_tentativas` + `temporizador` + estado `S_BLOQUEIO`.
+- **Cadastro de senha** - estado `S_CADASTRO` grava a senha inicial.
+- **Alteração de senha** - estado `S_ALTERA`, acessível apenas com o cofre aberto.
+- **Validação de acesso** - `comparador` + estado `S_VALIDA`.
+- **Bloqueio após tentativas inválidas** - `contador_tentativas` + `temporizador` + estado `S_BLOQUEIO`.
 
 ---
 
@@ -151,8 +151,8 @@ Coletar dos relatórios do Genus (`syn/reports/`):
 
 | Pessoa | Responsabilidades |
 |--------|-------------------|
-| **Integrante A** | `cofre_controller` (FSM), `cofre_top`, diagrama de estados, parte do testbench (cenários de acesso e bloqueio), síntese no Genus (`syn_genus.tcl`) e coleta de área/potência. |
-| **Integrante B** | Módulos de apoio (`registrador_senha`, `comparador`, `contador_tentativas`, `temporizador`, `cofre_pkg`), parte do testbench (cadastro, alteração, casos de borda), scripts do Xcelium, simulação pós-síntese e análise de timing/Fmax. |
+| **Caio Vinícius** | `cofre_controller` (FSM), `cofre_top`, diagrama de estados, parte do testbench (cenários de acesso e bloqueio), síntese no Genus (`syn_genus.tcl`) e coleta de área/potência. |
+| **Victor Guedes** | Módulos de apoio (`registrador_senha`, `comparador`, `contador_tentativas`, `temporizador`, `cofre_pkg`), parte do testbench (cadastro, alteração, casos de borda), scripts do Xcelium, simulação pós-síntese e análise de timing/Fmax. |
 
 Ambos participam da escrita do **relatório técnico** e da revisão final.
 
@@ -167,6 +167,3 @@ Ambos participam da escrita do **relatório técnico** e da revisão final.
 | `W_SENHA` | 16 | largura total da senha |
 | `MAX_TENT` | 3 | tentativas antes de bloquear |
 | `T_BLOQUEIO` | 20 | ciclos de bloqueio |
-
-> Para a apresentação, `T_BLOQUEIO` pode ser pequeno (ex.: 20) para a simulação
-> ser rápida. Em hardware real, aumentar conforme a frequência de clock.
