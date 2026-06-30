@@ -1,10 +1,10 @@
 #!/bin/bash
-#==============================================================================
+
 # run_xcelium.sh
 # Compilacao e simulacao RTL do Cofre Digital no Xcelium.
 # Uso:  ./run_xcelium.sh          (modo batch, autochecking)
 #       ./run_xcelium.sh gui      (abre o SimVision)
-#==============================================================================
+
 
 MODO=$1
 GUI_FLAG=""
