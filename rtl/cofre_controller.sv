@@ -1,10 +1,9 @@
-//==============================================================================
 // cofre_controller.sv
 // FSM principal (Moore) do Cofre Digital. Modelo de tres blocos:
-//   - always_ff  : registrador de estado
-//   - always_comb: logica de proximo estado
-//   - always_comb: logica de saidas
-//==============================================================================
+// always_ff  : registrador de estado
+// always_comb: logica de proximo estado
+// lways_comb: logica de saidas
+
 import cofre_pkg::*;
 
 module cofre_controller (
@@ -34,9 +33,9 @@ module cofre_controller (
 
   estado_t estado, prox_estado;
 
-  // ---------------------------------------------------------------------------
+  
   // Bloco 1: registrador de estado (sequencial)
-  // ---------------------------------------------------------------------------
+  
   always_ff @(posedge clk or posedge rst) begin
     if (rst)
       estado <= S_RESET;
@@ -44,9 +43,9 @@ module cofre_controller (
       estado <= prox_estado;
   end
 
-  // ---------------------------------------------------------------------------
+  
   // Bloco 2: logica de proximo estado (combinacional)
-  // ---------------------------------------------------------------------------
+  
   always_comb begin
     prox_estado = estado; // default: mantem
 
@@ -102,9 +101,8 @@ module cofre_controller (
     endcase
   end
 
-  // ---------------------------------------------------------------------------
   // Bloco 3: logica de saidas (combinacional, Moore + acoes de transicao)
-  // ---------------------------------------------------------------------------
+  
   always_comb begin
     // Defaults
     carregar_senha  = 1'b0;
