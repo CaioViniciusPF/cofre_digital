@@ -1,9 +1,8 @@
-//==============================================================================
 // tb_cofre_top.sv
 // Testbench RTL autochecking do Cofre Digital Programavel.
 // Verifica: cadastro, acesso valido, acesso invalido, bloqueio apos
 // MAX_TENT tentativas, fim do bloqueio, alteracao de senha e casos de borda.
-//==============================================================================
+
 import cofre_pkg::*;
 
 module tb_cofre_top;
@@ -48,9 +47,9 @@ module tb_cofre_top;
   initial clk = 0;
   always #5 clk = ~clk;
 
-  // ---------------------------------------------------------------------------
+  
   // Tarefas auxiliares
-  // ---------------------------------------------------------------------------
+  
 
   // Pulso de confirmacao por 1 ciclo
   task automatic pulso_confirmar();
@@ -83,9 +82,9 @@ module tb_cofre_top;
     @(negedge clk); // deixa a FSM avancar (S_VALIDA -> destino)
   endtask
 
-  // ---------------------------------------------------------------------------
+  
   // Sequencia principal de teste
-  // ---------------------------------------------------------------------------
+  
   initial begin
     // Inicializacao
     rst       = 1'b1;
@@ -96,9 +95,9 @@ module tb_cofre_top;
     rst = 1'b0;
     @(negedge clk);
 
-    //------------------------------------------------------------------
+    
     // 1) CADASTRO da senha inicial
-    //------------------------------------------------------------------
+    
     @(negedge clk);
     check(estado == S_CADASTRO, "Apos reset deve ir para CADASTRO");
     senha_in = SENHA1;
@@ -106,9 +105,9 @@ module tb_cofre_top;
     @(negedge clk);
     check(estado == S_IDLE, "Apos cadastro deve ir para IDLE");
 
-    //------------------------------------------------------------------
+    
     // 2) ACESSO VALIDO
-    //------------------------------------------------------------------
+    
     tentar_abrir(SENHA1);
     check(estado == S_ABERTO,  "Senha correta deve abrir o cofre");
     check(cofre_aberto == 1'b1,"cofre_aberto deve estar em 1");
@@ -123,42 +122,42 @@ module tb_cofre_top;
     check(estado == S_IDLE,     "Apos FECHAR deve voltar para IDLE");
     check(cofre_aberto == 1'b0, "Cofre deve estar fechado");
 
-    //------------------------------------------------------------------
+    
     // 3) ACESSO INVALIDO (1 tentativa) - nao deve abrir
-    //------------------------------------------------------------------
+    
     tentar_abrir(ERRADA);
     check(estado == S_IDLE,      "Senha errada nao abre (volta IDLE)");
     check(cofre_aberto == 1'b0,  "Cofre permanece fechado com senha errada");
     check(tentativas == 1,       "Contador deve marcar 1 tentativa");
 
-    //------------------------------------------------------------------
+    
     // 4) BLOQUEIO apos MAX_TENT tentativas invalidas
     //    Ja temos 1 erro; faltam (MAX_TENT-1) para estourar
-    //------------------------------------------------------------------
+    
     for (int i = 0; i < MAX_TENT-1; i++) begin
       tentar_abrir(ERRADA);
     end
     check(estado == S_BLOQUEIO, "Apos MAX_TENT erros deve BLOQUEAR");
     check(bloqueado == 1'b1,    "Sinal bloqueado deve estar em 1");
 
-    //------------------------------------------------------------------
+    
     // 5) FIM DO BLOQUEIO - apos T_BLOQUEIO ciclos volta para IDLE
-    //------------------------------------------------------------------
+    
     // Espera o temporizador terminar
     wait (estado == S_IDLE);
     check(estado == S_IDLE,     "Apos bloqueio deve voltar para IDLE");
     check(bloqueado == 1'b0,    "Sinal bloqueado deve voltar a 0");
     check(tentativas == 0,      "Fim do bloqueio zera tentativas");
 
-    //------------------------------------------------------------------
+    
     // 6) ACESSO VALIDO novamente apos bloqueio
-    //------------------------------------------------------------------
+    
     tentar_abrir(SENHA1);
     check(estado == S_ABERTO,   "Senha correta abre apos bloqueio");
 
-    //------------------------------------------------------------------
+    
     // 7) ALTERACAO de senha (cofre aberto)
-    //------------------------------------------------------------------
+    
     @(negedge clk);
     senha_in = SENHA2;
     op       = OP_ALTERAR;
@@ -176,9 +175,9 @@ module tb_cofre_top;
     op = OP_NENHUMA;
     @(negedge clk);
 
-    //------------------------------------------------------------------
+    
     // 8) Acesso com a NOVA senha deve funcionar
-    //------------------------------------------------------------------
+    
     tentar_abrir(SENHA2);
     check(estado == S_ABERTO,   "Nova senha deve abrir o cofre");
 
@@ -188,9 +187,9 @@ module tb_cofre_top;
     tentar_abrir(SENHA1);
     check(cofre_aberto == 1'b0,  "Senha antiga NAO deve mais abrir");
 
-    //------------------------------------------------------------------
+    
     // Relatorio final
-    //------------------------------------------------------------------
+    
     @(negedge clk);
     $display("==================================================");
     $display("  RESUMO: %0d verificacoes, %0d erros", checks, erros);
