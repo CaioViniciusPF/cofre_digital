@@ -1,11 +1,8 @@
-#==============================================================================
 # syn_genus.tcl
 # Sintese logica do Cofre Digital no Cadence Genus
-#
 # Uso:
 #   cd syn
 #   genus -files syn_genus.tcl
-#==============================================================================
 
 # Diretório onde o script está sendo executado
 set LOCAL_DIR [exec pwd]
