@@ -1,7 +1,6 @@
-//==============================================================================
 // comparador.sv
 // Compara a senha digitada com a senha armazenada (combinacional).
-//==============================================================================
+
 import cofre_pkg::*;
 
 module comparador (
