@@ -1,12 +1,11 @@
-//==============================================================================
 // cofre_top.sv
-// Top-level do Cofre Digital Programavel. Instancia e interconecta:
+// Top-level do Cofre Digital Programavel.
 //   - registrador_senha
 //   - comparador
 //   - contador_tentativas
 //   - temporizador
 //   - cofre_controller (FSM)
-//==============================================================================
+
 import cofre_pkg::*;
 
 module cofre_top (
@@ -51,18 +50,16 @@ module cofre_top (
     .cadastrada  (cadastrada)
   );
 
-  // --------------------------------------------------------------------------
+  
   // Comparador
-  // --------------------------------------------------------------------------
   comparador u_cmp (
     .senha_digitada   (senha_in),
     .senha_armazenada (senha_armazenada),
     .senha_ok         (senha_ok)
   );
 
-  // --------------------------------------------------------------------------
+  
   // Contador de tentativas
-  // --------------------------------------------------------------------------
   contador_tentativas u_cnt (
     .clk         (clk),
     .rst         (rst),
@@ -73,9 +70,8 @@ module cofre_top (
     .ultima_tent (ultima_tent)
   );
 
-  // --------------------------------------------------------------------------
+  
   // Temporizador de bloqueio
-  // --------------------------------------------------------------------------
   temporizador u_timer (
     .clk     (clk),
     .rst     (rst),
@@ -83,9 +79,7 @@ module cofre_top (
     .fim     (fim_bloqueio)
   );
 
-  // --------------------------------------------------------------------------
   // Controlador (FSM)
-  // --------------------------------------------------------------------------
   cofre_controller u_ctrl (
     .clk             (clk),
     .rst             (rst),
