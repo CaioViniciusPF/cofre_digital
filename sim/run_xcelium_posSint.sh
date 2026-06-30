@@ -1,9 +1,9 @@
 #!/bin/bash
-#==============================================================================
+
 # run_xcelium_posSint.sh
 # Simulacao POS-SINTESE do Cofre Digital
 # Usa a netlist gerada pelo Genus + biblioteca Verilog da tecnologia
-#==============================================================================
+
 
 echo "========================================"
 echo "Simulacao POS-SINTESE com Xcelium"
