@@ -1,7 +1,6 @@
-//==============================================================================
 // registrador_senha.sv
 // Armazena a senha cadastrada. Permite escrita (cadastro/alteracao) e leitura.
-//==============================================================================
+
 import cofre_pkg::*;
 
 module registrador_senha (
